@@ -1,0 +1,20 @@
+# Specify source folder
+$source = 'C:\Data'
+If (-not (Test-Path -Path $source -ErrorAction SilentlyContinue)) {
+    throw "Error. Source Folder not found"
+}
+
+# Specify zip file location folder (destination folder, make sure it exists)
+$destination = 'C:\ZipFiles'
+If (-not (Test-Path -Path $destination -ErrorAction SilentlyContinue)) {
+    New-Item -ItemType Directory -Path $destination -Force
+}
+
+# Action
+$subfolders = Get-ChildItem $source -Directory -Recurse
+foreach ($s in $subfolders) {
+    $folderpath = $s.FullName
+    $foldername = $s.Name
+    Compress-Archive -Path $folderpath -DestinationPath $destination\$foldername -Update -Verbose
+}
+Start-Process $destination
